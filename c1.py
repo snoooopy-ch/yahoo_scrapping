@@ -106,7 +106,7 @@ def screenShotFull(driver, filename, timeout=30):
     else:
         binary_location = "/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome"
 
-    cmd = '{} --headless --hide-scrollbars --incognito --screenshot={} --window-size={},{} "{}"'.format(binary_location, filename, w, h, url)
+    cmd = '{} --headless --hide-scrollbars --incognito --no-sandbox --screenshot={} --window-size={},{} "{}"'.format(binary_location, filename, w, h, url)
 
     # print(cmd)
 
@@ -127,24 +127,13 @@ def init_selenium2():
     return browser
 
 def init_selenium():
-
-    options = Options()
-
-    options.add_argument('--headless')
-    options.binary_location = '/usr/bin/google-chrome'
-    # options.add_argument("--remote-debugging-port=9222")
-    # options.add_argument("--disable-dev-shm-using")
-    # options.add_argument("--disable-extensions")
-    # options.add_argument("start-maximized")
-    # options.add_argument("disable-infobars")
-    # options.add_argument('--no-sandbox')
-    options.add_argument('--disable-gpu')
-    # options.add_argument('--incognito')
-    options.add_argument('--window-size=1280,1024')
-
-    options.add_argument('--ignore-certificate-errors') #SSLエラー対策
-
-    driver = webdriver.Chrome(options = options)
+    chromeOptions = webdriver.ChromeOptions()
+    chromeOptions.add_argument("--headless")
+    chromeOptions.add_argument("--remote-debugging-port=9222")
+    chromeOptions.add_argument('--no-sandbox')
+    chromeOptions.add_argument("lang=ja_JP") 
+    chromeOptions.add_argument("user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36")
+    driver = webdriver.Chrome('/usr/bin/chromedriver',chrome_options=chromeOptions)  
 
     return driver
 
@@ -168,8 +157,7 @@ if __name__ == '__main__':
         sys.exit()
 
     try:
-        driver = init_selenium()
-
+        driver = init_selenium() 
         for user in db.table('users').get():
 
             acc_category = ('男性' if user['is_male']==1 else '女性') + ' ' + user['age']
@@ -182,7 +170,7 @@ if __name__ == '__main__':
                 input_id = driver.find_element_by_xpath('//input[@name="login"]')
                 input_id.send_keys(user['email'])
                 driver.find_element_by_xpath("//button[@id='btnNext']").click()
-
+                
                 time.sleep(2)
             except Exception:
                 pass
