@@ -10,7 +10,7 @@ from datetime import datetime, date, timedelta
 import re
 import csv
 import json
-import pandas as pd
+#import pandas as pd
 
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
